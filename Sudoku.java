@@ -16,6 +16,10 @@ public class Sudoku {
     }
     
     public int[][] board() {
+        return copyBoard;
+    }
+    
+    public void printBoard() {
         for (int i = 0; i < copyBoard.length; i++) {
             System.out.println();
             for (int j = 0; j < copyBoard[i].length; j++) {
@@ -24,7 +28,6 @@ public class Sudoku {
             }
         }
         System.out.println();
-        return copyBoard;
     }
     
     public boolean[] candidates(int row, int column) {
@@ -62,19 +65,19 @@ public class Sudoku {
         for (int i = 0; i < array.length; i++) {
             array[i] = true;
         }
-        
+        // Test for row
         for (int i = 0; i < copyBoard.length; i++) {
             if (copyBoard[row - 1][i] != 0) {
                 array[copyBoard[row - 1][i] - 1] = false;
             }
         }
-        
+        // Test for column
         for (int j = 0; j < copyBoard.length; j++) {
             if (copyBoard[j][column - 1] != 0) {
                 array[copyBoard[j][column - 1] - 1] = false;
             }
         }
-        
+        // Test for box
         for (int i = rowLower; i <= rowLower + 2; i++) {
             for (int j = columnLower; j <= columnLower + 2; j++) {
                 if (copyBoard[i][j] != 0) {
@@ -85,9 +88,39 @@ public class Sudoku {
         return array; 
     }
     
- 
-        
+    public boolean nakedSingles() {
+        int c = 0; // Counter
+        int nakedSingle = 0; // The value of the naked single 
+        // Generate candidates for the empty cells
+        for (int i = 1; i <= 9; i++) {
+            for (int j = 1; j <= 9; j++) {
+                boolean[] array = candidates(i, j);
+                for (boolean value : array) {
+                    if (value == true) 
+                        c++;
+                }
+                if (c == 1) { // If a cell has only one candidate
+                    for (int d = 0; d < array.length; d++) {
+                        if (array[d] == true) {
+                            nakedSingle = d + 1; // Find out what that candidate is
+                            d = array.length;
+                        }
+                    }
+                    copyBoard[i -1][j - 1] = nakedSingle; // Assign it to its appropriate place in the board
+                    System.out.printf("%d has been placed into row: %d and column: %d", nakedSingle, i, j);
+                    return true; // A move has been made
+                } else { // If a cell does not have only one candidate
+                    c = 0; 
+                } 
+            }
+        }
+        return false; // No move has been made
+    }
     
+    public boolean hiddenSingles() {
+        return false;
+    }
+        
     public static void main(String[] args) {
         int[][] matrix = new int[9][9];
         String digits = "000704005020010070000080002090006250600070008053200010400090000030060090200407000";
@@ -101,9 +134,10 @@ public class Sudoku {
         
         Sudoku s = new Sudoku(matrix);
         int[][] testmatrix = s.board();
-        boolean[] array = s.candidates(1,7);
-        for (boolean value: array) {
-            System.out.println(value);
-        }
+        s.printBoard();
+        boolean[] array = s.candidates(1,4);
+        s.nakedSingles();
+        s.printBoard();
+        
     }
 }
