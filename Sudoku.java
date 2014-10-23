@@ -161,6 +161,46 @@ public class Sudoku {
         return box;
     }
  
+    public boolean checkColumns(int boxOfSingle, int columnOfSingle, int hiddenSingle) {
+        int column1 = 0;
+        // Checks which column of the Box the Value is in
+        if (boxOfSingle == 1 || boxOfSingle == 4 || boxOfSingle == 7) {
+            column1 = 1;
+        } else if (boxOfSingle == 2 || boxOfSingle == 5 || boxOfSingle == 8) {
+            column1 = 4;
+        } else if (boxOfSingle == 3 || boxOfSingle == 6 || boxOfSingle == 9) {
+            column1 = 7;
+        } 
+        
+        int cr1 = 0;
+        int cr2 = 0;
+        // Assigns the two columns the original value is not in to the two ints
+        if (columnOfSingle == column1) {
+            cr1 = column1 + 1;
+            cr2 = column1 + 2;
+        } else if (columnOfSingle == (column1 + 1)) {
+            cr1 = column1 - 1;
+            cr2 = column1 + 1;
+        } else if (columnOfSingle == (column1 + 2)) {
+            cr1 = column1 - 2;
+            cr2 = column1 - 1;
+        } 
+        // Checks the two columns to see if the hiddenSingle is in either column
+        // Returns true if the hiddenSingle is not in either one and False if it is
+        for (int j = 0; j < copyBoard.length; j++) {
+            if (copyBoard[j][cr1] != hiddenSingle) {
+                for (int i = 0; i < copyBoard.length; i++) {
+                    if (copyBoard[i][cr2] != hiddenSingle) {
+                        return true;
+                    }
+                }
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+    
     public static void main(String[] args) {
         int[][] matrix = new int[9][9];
         String digits = "100704005020010070000080002090006250600070008053200010400090000030060090200407000";
