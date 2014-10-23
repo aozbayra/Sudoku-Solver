@@ -1,4 +1,4 @@
-import java.util.Arrays;
+
 
 public class Sudoku {
     int[][] board = new int[9][9];
@@ -116,14 +116,54 @@ public class Sudoku {
         }
         return false; // No move has been made
     }
+    private int findSingle(boolean[] array) {
+        int single = 0;
+        for (int x = 0; x < array.length; x++) {
+            if (array[x] == true) {
+                single = x + 1;
+                array[x] = false; // Turn the extracted single off in the array
+            }
+        }
+        return single;
+    }
+    
+                
     
     public boolean hiddenSingles() {
+        int hiddenSingle = 0;
+        int checkHidden = 0;
+        int rowOfSingle = 0;
+        int columnOfSingle = 0;
+        int boxOfSingle = 0;
+        // Generate candidates for the empty cells
+        for (int i = 1; i <= 9; i++) {
+            for (int j = 1; j <= 9; j++) {
+                boolean[] array = candidates(i, j);
+                hiddenSingle = findSingle(array); // First candidate to be a hidden single.
+                rowOfSingle = i;
+                columnOfSingle = j;
+                boxOfSingle = findBox(rowOfSingle, columnOfSingle);
+                // if a candidate can occupy more than one cell that row and column, then it is not hidden, else its hidden candidate.
+            }
+        }
+                        
         return false;
     }
-        
+    
+    public int findBox(int row, int column) {
+        int box = 1;
+        for (int i = 3; i < row; i += 3) {
+            box += 3;
+        }
+        for (int i = 3;i < column; i += 3) {
+            box++;
+        }
+        return box;
+    }
+ 
     public static void main(String[] args) {
         int[][] matrix = new int[9][9];
-        String digits = "000704005020010070000080002090006250600070008053200010400090000030060090200407000";
+        String digits = "100704005020010070000080002090006250600070008053200010400090000030060090200407000";
         int counter = 0;
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
@@ -138,6 +178,8 @@ public class Sudoku {
         boolean[] array = s.candidates(1,4);
         s.nakedSingles();
         s.printBoard();
+        //boolean x = s.hiddenSingles();
+        
         
     }
 }
