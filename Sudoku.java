@@ -107,7 +107,7 @@ public class Sudoku {
                         }
                     }
                     copyBoard[i -1][j - 1] = nakedSingle; // Assign it to its appropriate place in the board
-                    System.out.printf("%d has been placed into row: %d and column: %d\n", nakedSingle, i, j);
+                    System.out.printf("Naked single %d has been placed into row: %d and column: %d\n", nakedSingle, i, j);
                     return true; // A move has been made
                 } else { // If a cell does not have only one candidate
                     c = 0; 
@@ -137,7 +137,7 @@ public class Sudoku {
                     boolean colResult = compareOtherColumns(hiddenSingle, otherColumns); // returns true if candidate is unique.
                     if (rowResult && colResult) {  // If it remains unique after being tested through other rows and columns
                         copyBoard[i - 1][j - 1] = hiddenSingle; // make the move
-                        System.out.printf("%d has been placed into row: %d and column: %d\n", hiddenSingle, i, j); 
+                        System.out.printf("Hidden single %d has been placed into row: %d and column: %d\n", hiddenSingle, i, j); 
                         return true; // A move has been made.
                     }
 
@@ -147,6 +147,22 @@ public class Sudoku {
         }               
         return finalResult;  // no hidden single has been found throughout the matrix
     }
+    
+    public boolean isSolved() {
+        for (int i = 0; i < copyBoard.length; i++) {
+            for (int j = 0; j < copyBoard[i].length; j++) {
+                if (copyBoard[i][j] == 0) {
+                    return false;  // Return false if you catch an empty cell
+                }
+            }
+        }
+        return true;  // Return true if there is no empty cell
+    }
+    
+    public void solve() {
+        while (!isSolved() && (nakedSingles() || hiddenSingles()));
+    }
+            
     private boolean compareOtherRows(int hiddenSingle, int[] otherRows) {
         boolean finalResult = true;
         for (int colFirst = 1; colFirst <= copyBoard.length; colFirst++) {
@@ -290,7 +306,8 @@ public class Sudoku {
     
     public static void main(String[] args) {
         int[][] matrix = new int[9][9];
-        String digits = "000704005020010070000080002090006250600070008053200010400090000030060090200407000";
+        //String digits = "000704005020010070000080002090006250600070008053200010400090000030060090200407000";
+        String digits = "000041000060000200000000000320600000000050040700000000000200300480000000501000000";
         int counter = 0;
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
@@ -301,7 +318,7 @@ public class Sudoku {
         Sudoku s = new Sudoku(matrix);
         int[][] testmatrix = s.board();
         s.printBoard();
-        s.hiddenSingles();
-        s.nakedSingles();
+        s.solve();
+        s.printBoard();
     }
 }
