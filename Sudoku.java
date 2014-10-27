@@ -107,7 +107,7 @@ public class Sudoku {
                         }
                     }
                     copyBoard[i -1][j - 1] = nakedSingle; // Assign it to its appropriate place in the board
-                    System.out.printf("%d has been placed into row: %d and column: %d", nakedSingle, i, j);
+                    System.out.printf("%d has been placed into row: %d and column: %d\n", nakedSingle, i, j);
                     return true; // A move has been made
                 } else { // If a cell does not have only one candidate
                     c = 0; 
@@ -136,19 +136,20 @@ public class Sudoku {
                     // Compare the cells in otherColumns with this candidate.
                     boolean colResult = compareOtherColumns(hiddenSingle, otherColumns); // returns true if candidate is unique.
                     if (rowResult && colResult) {
-                        finalResult = true; // A move has been made.
+                        copyBoard[i - 1][j - 1] = hiddenSingle;
+                        System.out.printf("%d has been placed into row: %d and column: %d\n", hiddenSingle, i, j); 
+                        return true; // A move has been made.
                     }
-                    copyBoard[i - 1][j - 1] = hiddenSingle;
-                    System.out.printf("%d has been placed into row: %d and column: %d", hiddenSingle, i, j); 
+
                 }
-                return finalResult;
+                
             }
         }               
-        return false;
+        return finalResult;
     }
     private boolean compareOtherRows(int hiddenSingle, int[] otherRows) {
         boolean finalResult = true;
-        for (int colFirst = 0; colFirst < copyBoard.length; colFirst++) {
+        for (int colFirst = 1; colFirst <= copyBoard.length; colFirst++) {
             boolean[] colBoolFirst = candidates(otherRows[0], colFirst);
             int[] colIntFirst = storeCandidates(colBoolFirst);
             boolean resultFirst = compareCell(hiddenSingle, colIntFirst);
@@ -157,7 +158,7 @@ public class Sudoku {
                 return false; // Failed the other rows test
             }
         }
-        for (int colSecond = 0; colSecond < copyBoard.length; colSecond++) {
+        for (int colSecond = 1; colSecond <= copyBoard.length; colSecond++) {
             boolean[] colBoolSecond = candidates(otherRows[1], colSecond);
             int[] colIntSecond = storeCandidates(colBoolSecond);
             boolean resultSecond = compareCell(hiddenSingle, colIntSecond);
@@ -170,7 +171,7 @@ public class Sudoku {
     
     private boolean compareOtherColumns(int hiddenSingle, int[] otherColumns) {
         boolean finalResult = true;
-        for (int rowFirst = 0; rowFirst < copyBoard.length; rowFirst++) {
+        for (int rowFirst = 1; rowFirst <= copyBoard.length; rowFirst++) {
             boolean[] rowBoolFirst = candidates(rowFirst, otherColumns[0]);
             int[] rowIntFirst = storeCandidates(rowBoolFirst);
             boolean resultFirst = compareCell(hiddenSingle, rowIntFirst);
@@ -178,7 +179,7 @@ public class Sudoku {
                 return false;
             }
         }
-        for (int rowSecond = 0; rowSecond < copyBoard.length; rowSecond++) {
+        for (int rowSecond = 1; rowSecond <= copyBoard.length; rowSecond++) {
             boolean[] rowBoolSecond = candidates(otherColumns[1], rowSecond);
             int[] rowIntSecond = storeCandidates(rowBoolSecond);
             boolean resultSecond = compareCell(hiddenSingle, rowIntSecond);
@@ -286,46 +287,6 @@ public class Sudoku {
             boxColumn = 7;
         return boxColumn;
     }
- 
-    public boolean checkColumns(int boxOfSingle, int columnOfSingle, int hiddenSingle) {
-        int column1 = 0;
-        // Checks which column of the Box the Value is in
-        if (boxOfSingle == 1 || boxOfSingle == 4 || boxOfSingle == 7) {
-            column1 = 1;
-        } else if (boxOfSingle == 2 || boxOfSingle == 5 || boxOfSingle == 8) {
-            column1 = 4;
-        } else if (boxOfSingle == 3 || boxOfSingle == 6 || boxOfSingle == 9) {
-            column1 = 7;
-        } 
-        
-        int cr1 = 0;
-        int cr2 = 0;
-        // Assigns the two columns the original value is not in to the two ints
-        if (columnOfSingle == column1) {
-            cr1 = column1 + 1;
-            cr2 = column1 + 2;
-        } else if (columnOfSingle == (column1 + 1)) {
-            cr1 = column1 - 1;
-            cr2 = column1 + 1;
-        } else if (columnOfSingle == (column1 + 2)) {
-            cr1 = column1 - 2;
-            cr2 = column1 - 1;
-        } 
-        // Checks the two columns to see if the hiddenSingle is in either column
-        // Returns true if the hiddenSingle is not in either one and False if it is
-        for (int j = 0; j < copyBoard.length; j++) {
-            if (copyBoard[j][cr1] != hiddenSingle) {
-                for (int i = 0; i < copyBoard.length; i++) {
-                    if (copyBoard[i][cr2] != hiddenSingle) {
-                        return true;
-                    }
-                }
-            } else {
-                return false;
-            }
-        }
-        return false;
-    }
     
     public static void main(String[] args) {
         int[][] matrix = new int[9][9];
@@ -341,23 +302,7 @@ public class Sudoku {
         Sudoku s = new Sudoku(matrix);
         int[][] testmatrix = s.board();
         s.printBoard();
-        boolean[] array = s.candidates(1,5);
-        //boolean x = s.hiddenSingles();
-        // The candidates are 2 and 3.
-//        int[] testArray = {1,2,3,4,5,6};
-//        boolean y = s.compareCell(7,testArray);
-//        System.out.println(y);
-//        int[] otherRows = s.getOtherRow(9,8);
-//        for (int value : otherRows) 
-//            System.out.println(value);
-        int[] otherColumns = s.getOtherColumn(8,4);
-        for (int value : otherColumns)
-            System.out.println(value);
-        
-        
-        
-
-
-
+        s.hiddenSingles();
+        s.nakedSingles();
     }
 }
