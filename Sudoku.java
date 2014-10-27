@@ -126,17 +126,17 @@ public class Sudoku {
                 int boxNumber = findBox(i,j);
                 int rowNumber = i;
                 int columnNumber = j;
-                int[] otherRows = getOtherRow(boxNumber, rowNumber);
-                int[] otherColumns = getOtherColumn(boxNumber, columnNumber);
-                int[] onlyCandidates = storeCandidates(array);
+                int[] otherRows = getOtherRow(boxNumber, rowNumber); // Find other rows that are present in the cell of the candidate
+                int[] otherColumns = getOtherColumn(boxNumber, columnNumber); // Find other columns that are present in the cell of the canddate
+                int[] onlyCandidates = storeCandidates(array); // Store only candidates in an integer array
                 for (int c = 0; c < onlyCandidates.length; c++) {
-                    int hiddenSingle = onlyCandidates[c];
+                    int hiddenSingle = onlyCandidates[c]; // Test each candidate
                     // Compare the cells in otherRows with this candidate.
                     boolean rowResult = compareOtherRows(hiddenSingle,otherRows); // returns true if candidate is unique.
                     // Compare the cells in otherColumns with this candidate.
                     boolean colResult = compareOtherColumns(hiddenSingle, otherColumns); // returns true if candidate is unique.
-                    if (rowResult && colResult) {
-                        copyBoard[i - 1][j - 1] = hiddenSingle;
+                    if (rowResult && colResult) {  // If it remains unique after being tested through other rows and columns
+                        copyBoard[i - 1][j - 1] = hiddenSingle; // make the move
                         System.out.printf("%d has been placed into row: %d and column: %d\n", hiddenSingle, i, j); 
                         return true; // A move has been made.
                     }
@@ -145,7 +145,7 @@ public class Sudoku {
                 
             }
         }               
-        return finalResult;
+        return finalResult;  // no hidden single has been found throughout the matrix
     }
     private boolean compareOtherRows(int hiddenSingle, int[] otherRows) {
         boolean finalResult = true;
@@ -298,7 +298,6 @@ public class Sudoku {
                 counter++;
             }
         }
-        
         Sudoku s = new Sudoku(matrix);
         int[][] testmatrix = s.board();
         s.printBoard();
