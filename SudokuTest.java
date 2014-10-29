@@ -31,8 +31,51 @@ public class SudokuTest extends TestCase {
         assertTrue(Arrays.equals(testArray, array));
     }
     
-    public void testNakedSingles() {
+    public void testNakedSinglesRow() {
+        int[][] row = new int[9][9];
+        String r = "032714685020010070000080002090006250600070008053200010400090000030060090200407000";
+        int count = 0;
+        for (int t = 0; t < row.length; t++) {
+            for (int y = 0; y < row[t].length; y++) {
+                row[t][y] = r.charAt(count) - 48;
+                count++;
+            }
+        }
+        Sudoku s = new Sudoku(row);
+        boolean d = s.nakedSingles();
+        assertTrue(d);
+    }
+    
+    public void testNakedSinglesColumn() {
         
+        int[][] column = new int[9][9];
+        String c = "300704005820010070900080002790006250600070008153200010400090000030060090200407000";
+        int u = 0;
+        for (int m = 0; m < column.length; m++){
+            for (int o = 0; o < column[m].length; o++) {
+                column[m][o] = c.charAt(u) - 48;
+                u++;
+            }
+        }
+        Sudoku s = new Sudoku(column);
+        boolean x = s.nakedSingles();
+        assertTrue(x);
+    }
+    
+    public void testNakedSinglesBox() {
+        
+        int[][] box = new int[9][9];
+        String test = "369704005524010070780080002090006250600070008053200010400090000030060090200407000";
+        int v = 0;
+        for (int z = 0; z < box.length; z++) {
+            for (int q = 0; q < box[z].length; q++) {
+                box[z][q] = test.charAt(v) - 48;
+                v++;   
+            }
+        }
+        Sudoku s = new Sudoku(box);
+        boolean f = s.nakedSingles();
+        assertTrue(f);
     }
     
     public void testHiddenSingles() {
