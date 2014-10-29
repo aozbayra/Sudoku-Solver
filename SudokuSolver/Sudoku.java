@@ -85,8 +85,9 @@ public class Sudoku {
                             d = array.length;
                         }
                     }
-                    copyBoard[i -1][j - 1] = nakedSingle; // Assign it to its appropriate place in the board
-                    System.out.printf("Naked single %d has been placed into row: %d and column: %d\n", nakedSingle, i, j);
+                    copyBoard[i - 1][j - 1] = nakedSingle; // Assign it to its appropriate place in the board
+                    System.out.printf("Naked single %d has been placed" 
+                                          + " into row: %d and column: %d\n", nakedSingle, i, j);
                     return true; // A move has been made
                 } else { // If a cell does not have only one candidate
                     c = 0; 
@@ -98,24 +99,31 @@ public class Sudoku {
           
     public boolean hiddenSingles() {  
         // Generate candidates for the empty cells
-        for (int i = 1; i <= 9; i++) {
+        for (int i = 1; i <= copyBoard.length; i++) {
             for (int j = 1; j <= 9; j++) {
                 boolean[] array = candidates(i, j);
-                int boxNumber = findBox(i,j);
+                int boxNumber = findBox(i, j);
                 int rowNumber = i;
                 int columnNumber = j;
-                int[] otherRows = getOtherRow(boxNumber, rowNumber); // Find other rows that are present in the cell of the candidate
-                int[] otherColumns = getOtherColumn(boxNumber, columnNumber); // Find other columns that are present in the cell of the canddate
-                int[] onlyCandidates = storeCandidates(array); // Store only candidates in an integer array
+                // Find other rows that are present in the cell of the candidate
+                int[] otherRows = getOtherRow(boxNumber, rowNumber); 
+                // Find other columns that are present in the cell of the canddate
+                int[] otherColumns = getOtherColumn(boxNumber, columnNumber); 
+                // Store only candidates in an integer array
+                int[] onlyCandidates = storeCandidates(array); 
                 for (int c = 0; c < onlyCandidates.length; c++) {
                     int hiddenSingle = onlyCandidates[c]; // Test each candidate
                     // Compare the cells in otherRows with this candidate.
-                    boolean rowResult = compareOtherRows(hiddenSingle, otherRows, boxNumber); // returns true if candidate is unique.
+                    // returns true if candidate is unique.
+                    boolean rowResult = compareOtherRows(hiddenSingle, otherRows, boxNumber); 
                     // Compare the cells in otherColumns with this candidate.
-                    boolean colResult = compareOtherColumns(hiddenSingle, otherColumns, boxNumber); // returns true if candidate is unique.
-                    if (rowResult && colResult) {  // If it remains unique after being tested through other rows and columns
+                    // returns true if candidate is unique.
+                    boolean colResult = compareOtherColumns(hiddenSingle, otherColumns, boxNumber); 
+                    // If it remains unique after being tested through other rows and columns
+                    if (rowResult && colResult) {  
                         copyBoard[i - 1][j - 1] = hiddenSingle; // make the move
-                        System.out.printf("Hidden single %d has been placed into row: %d and column: %d\n", hiddenSingle, i, j); 
+                        System.out.printf("Hidden single %d has been placed" 
+                                              + " into row: %d and column: %d\n", hiddenSingle, i, j); 
                         return true; // A move has been made.
                     }
 
@@ -144,8 +152,8 @@ public class Sudoku {
     private boolean compareOtherRows(int hiddenSingle, int[] otherRows, int boxNumber) {
         
         int boxColumn = findBoxColumn(boxNumber);
-
-        for (int colFirst = boxColumn; colFirst <= boxColumn + 2; colFirst++) { // The boundaries are set to within the box of the cell
+         // The boundaries are set to within the box of the cell
+        for (int colFirst = boxColumn; colFirst <= boxColumn + 2; colFirst++) {
             boolean[] colBoolFirst = candidates(otherRows[0], colFirst);
             int[] colIntFirst = storeCandidates(colBoolFirst);
             boolean resultFirst = compareCell(hiddenSingle, colIntFirst);
@@ -255,7 +263,7 @@ public class Sudoku {
         for (int i = 3; i < row; i += 3) {
             box += 3;
         }
-        for (int i = 3;i < column; i += 3) {
+        for (int i = 3; i < column; i += 3) {
             box++;
         }
         return box;
@@ -263,7 +271,7 @@ public class Sudoku {
     
     private int findBoxRow(int boxNumber) {
         int boxRow = 1;
-        for (int i = 3; i < 10; i += 3) {
+        for (int i = 3; i <= copyBoard.length; i += 3) {
             if (boxNumber <= i) {
                 return boxRow;
             } else
@@ -285,18 +293,18 @@ public class Sudoku {
     }
     
     public static void main(String[] args) {
-        int[][] matrix = new int[9][9];
-        String digits = "406030020005042000200000400370006100500403007004800035008000003000160500050090802";
-        int counter = 0;
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                matrix[i][j] = digits.charAt(counter) - 48;
-                counter++;
-            }
-        }
-        Sudoku s = new Sudoku(matrix);
-        s.printBoard();
-        s.solve();
-        s.printBoard();
+//        int[][] matrix = new int[9][9];
+//        String digits = "406030020005042000200000400370006100500403007004800035008000003000160500050090802";
+//        int counter = 0;
+//        for (int i = 0; i < matrix.length; i++) {
+//            for (int j = 0; j < matrix[i].length; j++) {
+//                matrix[i][j] = digits.charAt(counter) - 48;
+//                counter++;
+//            }
+//        }
+//        Sudoku s = new Sudoku(matrix);
+//        s.printBoard();
+//        s.solve();
+//        s.printBoard();
     }
 }

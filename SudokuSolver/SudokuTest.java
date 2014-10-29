@@ -15,6 +15,15 @@ public class SudokuTest extends TestCase {
      * many "testSomething" methods in this class as you wish, and each
      * one will be called when running JUnit over this class.)
      */
+    public void testSudoku() {
+        Sudoku s = new Sudoku();
+    }
+    
+    public void testPrintBoard() {
+        Sudoku s = new Sudoku();
+        s.printBoard();
+    }
+    
     public void testCandidates() {
 
         int[][] matrix = new int[9][9];
