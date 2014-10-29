@@ -284,7 +284,7 @@ public class Sudoku {
     
     public static void main(String[] args) {
         int[][] matrix = new int[9][9];
-        String digits = "000704005020010070000080002090006250600070008053200010400090000030060090200407000";
+        String digits = "000704005000010079000080000090006050000000008053209010400090000030060090200407000";
         int counter = 0;
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
