@@ -7,7 +7,8 @@ import static org.junit.Assert.*;
  * Every method starting with the word "test" will be called when running
  * the test with JUnit.
  */
-public class SudokuTest extends TestCase {      
+public class SudokuTest extends TestCase {
+        Sudoku s = new Sudoku();       
     /**
      * A test method.
      * (Replace "X" with a name describing the test.  You may write as
@@ -42,7 +43,9 @@ public class SudokuTest extends TestCase {
             }
         }
         Sudoku s = new Sudoku(row);
+        int[][] before = s.board();
         boolean d = s.nakedSingles();
+        int[][] after = s.board();
         assertTrue(d);
     }
     
@@ -94,7 +97,41 @@ public class SudokuTest extends TestCase {
         assertTrue(a);
     }
     
+    public void testHiddenSinglesColumn() {
+        int[][] matrix = new int[9][9];
+        String digits = "000704005000010079000080000090006050000000008053209010400090000030060090200407000";
+        int counter = 0;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                matrix[i][j] = digits.charAt(counter) - 48;
+                counter++;
+            }
+        }
+        
+        Sudoku s = new Sudoku(matrix);
+        boolean a = s.hiddenSingles();
+        assertTrue(a);
+    }
+    
+    public void testHiddenSinglesBox() {
+        int[][] matrix = new int[9][9];
+        String digits = "000704005020010070000080002890006250600070008053200010400090000030860090200407000";
+        int counter = 0;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                matrix[i][j] = digits.charAt(counter) - 48;
+                counter++;
+            }
+        }
+        
+        Sudoku s = new Sudoku(matrix);
+        boolean a = s.hiddenSingles();
+        assertTrue(a);
+    }
+    
     public void testIsSolved() {
+        boolean m = s.isSolved();
+        assertFalse(m);
     }
     
     public void testSolve() {
