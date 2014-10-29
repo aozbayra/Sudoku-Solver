@@ -78,7 +78,20 @@ public class SudokuTest extends TestCase {
         assertTrue(f);
     }
     
-    public void testHiddenSingles() {
+    public void testHiddenSinglesRow() {
+        int[][] matrix = new int[9][9];
+        String digits = "000724005000010070000080002090006250602070008053200010400090000030060090200407000";
+        int counter = 0;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                matrix[i][j] = digits.charAt(counter) - 48;
+                counter++;
+            }
+        }
+        
+        Sudoku s = new Sudoku(matrix);
+        boolean a = s.hiddenSingles();
+        assertTrue(a);
     }
     
     public void testIsSolved() {
