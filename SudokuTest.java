@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
  * the test with JUnit.
  */
 public class SudokuTest extends TestCase {
-        Sudoku s = new Sudoku();       
+
     /**
      * A test method.
      * (Replace "X" with a name describing the test.  You may write as
@@ -130,11 +130,33 @@ public class SudokuTest extends TestCase {
     }
     
     public void testIsSolved() {
+        int[][] matrix = new int[9][9];
+        String digits = "000704005020010070000080002890006250600070008053200010400090000030860090200407000";
+        int counter = 0;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                matrix[i][j] = digits.charAt(counter) - 48;
+                counter++;
+            }
+        }
+        Sudoku s = new Sudoku(matrix);
         boolean m = s.isSolved();
         assertFalse(m);
     }
     
     public void testSolve() {
-        
+        int[][] matrix = new int[9][9];
+        String digits = "406030020005042000200000400370006100500403007004800035008000003000160500050090802";
+        int counter = 0;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                matrix[i][j] = digits.charAt(counter) - 48;
+                counter++;
+            }
+        }
+        Sudoku s = new Sudoku(matrix);
+        s.solve();
+        boolean test = s.isSolved();
+        assertTrue(test);
     }
 }

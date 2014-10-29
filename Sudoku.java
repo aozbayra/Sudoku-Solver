@@ -295,7 +295,6 @@ public class Sudoku {
             }
         }
         Sudoku s = new Sudoku(matrix);
-        int[][] testmatrix = s.board();
         s.printBoard();
         s.solve();
         s.printBoard();
