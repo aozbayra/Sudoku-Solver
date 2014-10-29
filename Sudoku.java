@@ -110,9 +110,9 @@ public class Sudoku {
                 for (int c = 0; c < onlyCandidates.length; c++) {
                     int hiddenSingle = onlyCandidates[c]; // Test each candidate
                     // Compare the cells in otherRows with this candidate.
-                    boolean rowResult = compareOtherRows(hiddenSingle,otherRows); // returns true if candidate is unique.
+                    boolean rowResult = compareOtherRows(hiddenSingle, otherRows, boxNumber); // returns true if candidate is unique.
                     // Compare the cells in otherColumns with this candidate.
-                    boolean colResult = compareOtherColumns(hiddenSingle, otherColumns); // returns true if candidate is unique.
+                    boolean colResult = compareOtherColumns(hiddenSingle, otherColumns, boxNumber); // returns true if candidate is unique.
                     if (rowResult && colResult) {  // If it remains unique after being tested through other rows and columns
                         copyBoard[i - 1][j - 1] = hiddenSingle; // make the move
                         System.out.printf("Hidden single %d has been placed into row: %d and column: %d\n", hiddenSingle, i, j); 
@@ -141,9 +141,11 @@ public class Sudoku {
         while (!isSolved() && (nakedSingles() || hiddenSingles()));
     }
             
-    private boolean compareOtherRows(int hiddenSingle, int[] otherRows) {
+    private boolean compareOtherRows(int hiddenSingle, int[] otherRows, int boxNumber) {
+        
+        int boxColumn = findBoxColumn(boxNumber);
 
-        for (int colFirst = 1; colFirst <= copyBoard.length; colFirst++) {
+        for (int colFirst = boxColumn; colFirst <= boxColumn + 2; colFirst++) { // The boundaries are set to within the box of the cell
             boolean[] colBoolFirst = candidates(otherRows[0], colFirst);
             int[] colIntFirst = storeCandidates(colBoolFirst);
             boolean resultFirst = compareCell(hiddenSingle, colIntFirst);
@@ -152,7 +154,7 @@ public class Sudoku {
                 return false; // Failed the other rows test
             }
         }
-        for (int colSecond = 1; colSecond <= copyBoard.length; colSecond++) {
+        for (int colSecond = boxColumn; colSecond <= boxColumn + 2; colSecond++) {
             boolean[] colBoolSecond = candidates(otherRows[1], colSecond);
             int[] colIntSecond = storeCandidates(colBoolSecond);
             boolean resultSecond = compareCell(hiddenSingle, colIntSecond);
@@ -163,9 +165,9 @@ public class Sudoku {
         return true;
     }
     
-    private boolean compareOtherColumns(int hiddenSingle, int[] otherColumns) {
-
-        for (int rowFirst = 1; rowFirst <= copyBoard.length; rowFirst++) {
+    private boolean compareOtherColumns(int hiddenSingle, int[] otherColumns, int boxNumber) {
+        int boxRow = findBoxRow(boxNumber);
+        for (int rowFirst = boxRow; rowFirst <= boxRow + 2; rowFirst++) {
             boolean[] rowBoolFirst = candidates(rowFirst, otherColumns[0]);
             int[] rowIntFirst = storeCandidates(rowBoolFirst);
             boolean resultFirst = compareCell(hiddenSingle, rowIntFirst);
@@ -173,8 +175,8 @@ public class Sudoku {
                 return false;
             }
         }
-        for (int rowSecond = 1; rowSecond <= copyBoard.length; rowSecond++) {
-            boolean[] rowBoolSecond = candidates(otherColumns[1], rowSecond);
+        for (int rowSecond = boxRow; rowSecond <= boxRow + 2; rowSecond++) {
+            boolean[] rowBoolSecond = candidates(rowSecond, otherColumns[1]);
             int[] rowIntSecond = storeCandidates(rowBoolSecond);
             boolean resultSecond = compareCell(hiddenSingle, rowIntSecond);
             if (resultSecond) {
@@ -284,7 +286,7 @@ public class Sudoku {
     
     public static void main(String[] args) {
         int[][] matrix = new int[9][9];
-        String digits = "000704005000010079000080000090006050000000008053209010400090000030060090200407000";
+        String digits = "406030020005042000200000400370006100500403007004800035008000003000160500050090802";
         int counter = 0;
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
@@ -297,6 +299,5 @@ public class Sudoku {
         s.printBoard();
         s.solve();
         s.printBoard();
-
     }
 }
