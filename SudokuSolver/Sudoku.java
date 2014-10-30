@@ -32,38 +32,38 @@ public class Sudoku {
     
     public boolean[] candidates(int row, int column) {
         
-        boolean[] array = new boolean[9];
+        boolean[] array = new boolean[10];
         int boxNumber = findBox(row, column);
         int boxRow = findBoxRow(boxNumber);
         int boxColumn = findBoxColumn(boxNumber);
         
         // Test if the cell is empty
-        if (copyBoard[row - 1][column - 1] != 0) {
+        if (copyBoard[row][column] != 0) {
             return array; 
         }
         
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 1; i < array.length; i++) {
             array[i] = true;
         }
         // Test for row
         for (int i = 0; i < copyBoard.length; i++) {
-            if (copyBoard[row - 1][i] != 0) {
-                array[copyBoard[row - 1][i] - 1] = false;
+            if (copyBoard[row][i] != 0) {
+                array[copyBoard[row][i]] = false;
             }
         }
 
         // Test for column
         for (int j = 0; j < copyBoard.length; j++) {
-            if (copyBoard[j][column - 1] != 0) {
-                array[copyBoard[j][column - 1] - 1] = false;
+            if (copyBoard[j][column] != 0) {
+                array[copyBoard[j][column]] = false;
             }
         }
 
         // Test for box
         for (int i = boxRow; i <= boxRow + 2; i++) {
             for (int j = boxColumn; j <= boxColumn + 2; j++) {
-                if (copyBoard[i - 1][j - 1] != 0) {
-                    array[copyBoard[i - 1][j - 1] - 1] = false;
+                if (copyBoard[i][j] != 0) {
+                    array[copyBoard[i][j]] = false;
                 }
             }
         }
@@ -71,66 +71,67 @@ public class Sudoku {
     }
     
     public boolean nakedSingles() {
-        int c = 0; // Counter
         int nakedSingle = 0; // The value of the naked single 
         // Generate candidates for the empty cells
-        for (int i = 1; i <= 9; i++) {
-            for (int j = 1; j <= 9; j++) {
+        for (int i = 0; i < copyBoard.length; i++) {
+            for (int j = 0; j < copyBoard[i].length; j++) {
                 boolean[] array = candidates(i, j);
-                c = getLength(array);
-                if (c == 1) { // If a cell has only one candidate
-                    for (int d = 0; d < array.length; d++) {
-                        if (array[d] == true) {
-                            nakedSingle = d + 1; // Find out what that candidate is
-                            d = array.length;
-                        }
-                    }
-                    copyBoard[i - 1][j - 1] = nakedSingle; // Assign it to its appropriate place in the board
+                int[] onlyCandidates = storeCandidates(array);
+                if (onlyCandidates.length == 1) { 
+                    nakedSingle = onlyCandidates[0]; 
+                    copyBoard[i][j] = nakedSingle;
                     System.out.printf("Naked single %d has been placed" 
                                           + " into row: %d and column: %d\n", nakedSingle, i, j);
-                    return true; // A move has been made
-                } else { // If a cell does not have only one candidate
-                    c = 0; 
-                } 
+                    return true; 
+                }
             }
         }
         return false; // No move has been made
     }
           
     public boolean hiddenSingles() {  
-        // Generate candidates for the empty cells
-        for (int i = 1; i <= copyBoard.length; i++) {
-            for (int j = 1; j <= 9; j++) {
+        for (int i = 0; i < copyBoard.length; i++) {
+            for (int j = 0; j < copyBoard[i].length; j++) {
                 boolean[] array = candidates(i, j);
                 int boxNumber = findBox(i, j);
                 int rowNumber = i;
                 int columnNumber = j;
-                // Find other rows that are present in the cell of the candidate
-                int[] otherRows = getOtherRow(boxNumber, rowNumber); 
-                // Find other columns that are present in the cell of the canddate
-                int[] otherColumns = getOtherColumn(boxNumber, columnNumber); 
-                // Store only candidates in an integer array
-                int[] onlyCandidates = storeCandidates(array); 
+                int[] onlyCandidates = storeCandidates(array);
+                // Test for box subunit
                 for (int c = 0; c < onlyCandidates.length; c++) {
-                    int hiddenSingle = onlyCandidates[c]; // Test each candidate
-                    // Compare the cells in otherRows with this candidate.
-                    // returns true if candidate is unique.
-                    boolean rowResult = compareOtherRows(hiddenSingle, otherRows, boxNumber); 
-                    // Compare the cells in otherColumns with this candidate.
-                    // returns true if candidate is unique.
-                    boolean colResult = compareOtherColumns(hiddenSingle, otherColumns, boxNumber); 
-                    // If it remains unique after being tested through other rows and columns
-                    if (rowResult && colResult) {  
-                        copyBoard[i - 1][j - 1] = hiddenSingle; // make the move
-                        System.out.printf("Hidden single %d has been placed" 
+                    int hiddenSingle = onlyCandidates[c]; 
+                    boolean ownBoxResult = compareOwnBox(hiddenSingle, rowNumber, columnNumber);
+                    if (ownBoxResult) {  
+                        copyBoard[i][j] = hiddenSingle;
+                        System.out.printf("Hidden single from box %d has been placed" 
                                               + " into row: %d and column: %d\n", hiddenSingle, i, j); 
-                        return true; // A move has been made.
+                        return true; 
                     }
-
                 }
-                
+                // Test for row subunit
+                for (int c = 0; c < onlyCandidates.length; c++) {
+                    int hiddenSingle = onlyCandidates[c];
+                    boolean ownRowResult = compareOwnRow(hiddenSingle, rowNumber, columnNumber);
+                    if (ownRowResult) {
+                        copyBoard[i][j] = hiddenSingle;
+                        System.out.printf("Hidden single from row %d has been placed" 
+                                              + " into row: %d and column: %d\n", hiddenSingle, i, j);
+                        return true;  
+                    }
+                }
+                // Test for column subunit
+                for (int c = 0; c < onlyCandidates.length; c++) {
+                    int hiddenSingle = onlyCandidates[c];
+                    boolean ownColResult = compareOwnColumn(hiddenSingle, columnNumber, rowNumber);
+                    if (ownColResult) {
+                        copyBoard[i][j] = hiddenSingle;
+                        System.out.printf("Hidden single from column %d has been placed" 
+                                              + " into row: %d and column: %d\n", hiddenSingle, i, j); 
+                        return true;
+                    }
+                }
             }
-        }               
+        }
         return false;  // no hidden single has been found throughout the matrix
     }
     
@@ -148,81 +149,56 @@ public class Sudoku {
     public void solve() {
         while (!isSolved() && (nakedSingles() || hiddenSingles()));
     }
-            
-    private boolean compareOtherRows(int hiddenSingle, int[] otherRows, int boxNumber) {
-        
-        int boxColumn = findBoxColumn(boxNumber);
-         // The boundaries are set to within the box of the cell
-        for (int colFirst = boxColumn; colFirst <= boxColumn + 2; colFirst++) {
-            boolean[] colBoolFirst = candidates(otherRows[0], colFirst);
-            int[] colIntFirst = storeCandidates(colBoolFirst);
-            boolean resultFirst = compareCell(hiddenSingle, colIntFirst);
-            // returns true if candidate exists in another cell.
-            if (resultFirst) {
-                return false; // Failed the other rows test
+    
+    private boolean compareOwnColumn(int hiddenSingle, int columnNumber, int rowNumber) {
+        for (int i = 0; i < copyBoard.length; i++) {
+            if (i == rowNumber) {
+                continue;
             }
+            boolean[] rowBool = candidates(i, columnNumber);
+            int[] rowInt = storeCandidates(rowBool);
+            boolean result = compareCell(hiddenSingle, rowInt);
+            
+            if (result) 
+                return false;
         }
-        for (int colSecond = boxColumn; colSecond <= boxColumn + 2; colSecond++) {
-            boolean[] colBoolSecond = candidates(otherRows[1], colSecond);
-            int[] colIntSecond = storeCandidates(colBoolSecond);
-            boolean resultSecond = compareCell(hiddenSingle, colIntSecond);
-            if (resultSecond) {
+        return true;
+    }
+    
+    private boolean compareOwnRow(int hiddenSingle, int rowNumber, int columnNumber) {
+        for (int j = 0; j < copyBoard.length; j++) {
+            if (j == columnNumber) {
+                continue;
+            }
+            boolean[] colBool = candidates(rowNumber, j);
+            int[] colInt = storeCandidates(colBool);
+            boolean result = compareCell(hiddenSingle, colInt);
+            if (result) {
                 return false;
             }
         }
         return true;
     }
     
-    private boolean compareOtherColumns(int hiddenSingle, int[] otherColumns, int boxNumber) {
+    private boolean compareOwnBox(int hiddenSingle, int rowNumber, int columnNumber) {
+        int boxNumber = findBox(rowNumber, columnNumber);
         int boxRow = findBoxRow(boxNumber);
-        for (int rowFirst = boxRow; rowFirst <= boxRow + 2; rowFirst++) {
-            boolean[] rowBoolFirst = candidates(rowFirst, otherColumns[0]);
-            int[] rowIntFirst = storeCandidates(rowBoolFirst);
-            boolean resultFirst = compareCell(hiddenSingle, rowIntFirst);
-            if (resultFirst) {
-                return false;
-            }
-        }
-        for (int rowSecond = boxRow; rowSecond <= boxRow + 2; rowSecond++) {
-            boolean[] rowBoolSecond = candidates(rowSecond, otherColumns[1]);
-            int[] rowIntSecond = storeCandidates(rowBoolSecond);
-            boolean resultSecond = compareCell(hiddenSingle, rowIntSecond);
-            if (resultSecond) {
-                return false;
+        int boxColumn = findBoxColumn(boxNumber);
+        for (int i = boxRow; i <= boxRow + 2; i++) {
+            for (int j = boxColumn; j <= boxColumn + 2; j++) {
+                if (i == rowNumber && j == columnNumber)
+                    continue;
+                boolean[] boxBool = candidates(i, j);
+                int[] boxInt = storeCandidates(boxBool);
+                boolean result = compareCell(hiddenSingle, boxInt);
+                if (result) {
+                    return false;
+                }
             }
         }
         return true;
     }
-    
-    
-    private int[] getOtherRow(int boxNumber, int rowNumber) {
-        int boxRow = findBoxRow(boxNumber);
-        //System.out.println(boxRow);
-        int[] otherRows = new int[2];
-        int c = 0;
-        for (int i = boxRow; i <= (boxRow + 2); i++) {
-            if (i != rowNumber) {
-                otherRows[c] = i;
-                c++;
-            }
-        }
-        return otherRows;
-    }
-    
-    private int[] getOtherColumn(int boxNumber, int columnNumber) {
-        int boxColumn = findBoxColumn(boxNumber);
-        //System.out.println(boxColumn);
-        int[] otherColumns = new int[2];
-        int c = 0;
-        for (int i = boxColumn; i <= (boxColumn + 2); i++) {
-            if (i != columnNumber) {
-                otherColumns[c] = i;
-                c++;
-            }
-        }
-        return otherColumns;
-    }
-            
+                     
     private boolean compareCell(int element, int[] array) {
         if (array.length == 0) 
             return false; // The candidate is not in the cell
@@ -250,7 +226,7 @@ public class Sudoku {
         int[] onlyCandidates = new int[getLength(array)];
         for (int i = 0; i < array.length; i++) {
             if (array[i] == true) {
-                onlyCandidates[c] = i + 1;
+                onlyCandidates[c] = i;
                 c++;
             }
         }
@@ -260,18 +236,18 @@ public class Sudoku {
     
     private int findBox(int row, int column) {
         int box = 1;
-        for (int i = 3; i < row; i += 3) {
+        for (int i = 2; i < row; i += 3) {
             box += 3;
         }
-        for (int i = 3; i < column; i += 3) {
+        for (int i = 2; i < column; i += 3) {
             box++;
         }
         return box;
     }
     
     private int findBoxRow(int boxNumber) {
-        int boxRow = 1;
-        for (int i = 3; i <= copyBoard.length; i += 3) {
+        int boxRow = 0;
+        for (int i = 3; i < copyBoard.length; i += 3) {
             if (boxNumber <= i) {
                 return boxRow;
             } else
@@ -281,20 +257,20 @@ public class Sudoku {
     }
     
     private int findBoxColumn(int boxNumber) {
-        int boxColumn = 1;
         int remainder = boxNumber % 3;
         if (remainder == 1) 
-            boxColumn = 1;
+            return 0;
         else if (remainder == 2) 
-            boxColumn = 4;
+            return 3;
         else
-            boxColumn = 7;
-        return boxColumn;
+            return 6;
     }
     
-    public static void main(String[] args) {
+    //public static void main(String[] args) {
 //        int[][] matrix = new int[9][9];
-//        String digits = "406030020005042000200000400370006100500403007004800035008000003000160500050090802";
+//        //String digits = "406030020005042000200000400370006100500403007004800035008000003000160500050090802";
+//        String digits = "010720000060001005020035000006008159000000000297500400000160090100300020000084070";
+//        //String digits = "028007000016083070000020851137290000000730000000046307290070000000860140000300700";
 //        int counter = 0;
 //        for (int i = 0; i < matrix.length; i++) {
 //            for (int j = 0; j < matrix[i].length; j++) {
@@ -306,5 +282,7 @@ public class Sudoku {
 //        s.printBoard();
 //        s.solve();
 //        s.printBoard();
-    }
+        
+        
+    //}
 }

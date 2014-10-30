@@ -36,8 +36,8 @@ public class SudokuTest extends TestCase {
             }
         }
         Sudoku s = new Sudoku(matrix);
-        boolean[] array = s.candidates(4,5);  // 3 and 4 should come out
-        boolean[] testArray = {false, false, true, true, false, false, false, false, false};
+        boolean[] array = s.candidates(3, 4);  // 3 and 4 should come out
+        boolean[] testArray = {false, false, false, true, true, false, false, false, false, false};
         assertTrue(Arrays.equals(testArray, array));
     }
     
@@ -63,7 +63,7 @@ public class SudokuTest extends TestCase {
         int[][] column = new int[9][9];
         String c = "300704005820010070900080002790006250600070008153200010400090000030060090200407000";
         int u = 0;
-        for (int m = 0; m < column.length; m++){
+        for (int m = 0; m < column.length; m++) {
             for (int o = 0; o < column[m].length; o++) {
                 column[m][o] = c.charAt(u) - 48;
                 u++;
